@@ -19,27 +19,35 @@ router.get('/:id', (req, res) => {
 });
 
 // get times
-router.get('/:id/:year?/:month?/:day?', (req, res) => {
+router.get('/:id/:fromYear/:fromMonth/:fromDay/:toYear/:toMonth/:toDay', (req, res) => {
 	User.findOne({_id: req.params.id}, (err, user) => {
 		if(err) {
 			res.status(404).send();
 			return;
 		}
 
-		const year = req.params.year;
 		let times = user.times;
 
-		// if(year) {
-		// 	times.forEach((time, index) => {
-		// 		const requestedYear = moment(new Date(year)).format('YYYY');
-		// 		const dateYear = moment(new Date(time.date)).format('YYYY');
+		const fromYear = req.params.fromYear;
+		const fromMonth = req.params.fromMonth;
+		const fromDay = req.params.fromDay;
 
-		// 		if(requestedYear != dateYear) {
-		// 			console.log(`removing ${index}`);
-		// 			times.splice(index, 1);
-		// 		}
-		// 	});
-		// }
+		const toYear = req.params.toYear;
+		const toMonth = req.params.toMonth;
+		const toDay = req.params.toDay;
+
+		times.forEach((time, index) => {
+
+			const timestapCurrentObj = moment(time.date).unix();
+
+			const timestampFrom = moment(`${fromYear}-${fromMonth}-${fromDay}`).unix();
+			const timestampTo = moment(`${fromYear}-${fromMonth}-${fromDay}`).unix();
+
+			if(timestapCurrentObj < timestampFrom || timestapCurrentObj > timestampTo) {
+				times.splice(index, 1);
+			}
+
+		});
 
 		res.status(200).send(times);
 	});

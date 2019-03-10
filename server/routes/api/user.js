@@ -19,4 +19,16 @@ router.post('/', (req, res) => {
 	});
 });
 
+// get user name
+router.get('/:id', (req, res) => {
+	User.findOne({_id: req.params.id}, (err, user) => {
+		if(err) {
+			res.status(404).send();
+			return;
+		}
+
+		res.status(200).send(user.name);
+	});
+})
+
 module.exports = router;

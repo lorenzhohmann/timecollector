@@ -1,26 +1,29 @@
 <template>
   <div id="app">
-    <header>
-      <div class="container">
-        <img alt="Vue logo" src="./assets/logo.png">
-        <h1>
-          TimeCollector
-          <span class="small">by Lorenz Hohmann</span>
-        </h1>
-      </div>
-    </header>
-
-    <MainComponent/>
+    <Header v-bind:userID="userID"/>
+    <MainComponent v-bind:userID="userID"/>
   </div>
 </template>
 
 <script>
-import MainComponent from './components/MainComponent.vue'
+import Header from './components/Header.vue';
+import MainComponent from './components/MainComponent.vue';
 
 export default {
   name: 'app',
   components: {
+    Header,
     MainComponent
+  },
+  data() {
+    return {
+      userID: ''
+    }
+  },
+  created() {
+    const href = window.location.href;
+    const hrefSplit = href.split('/');
+    this.userID = hrefSplit.pop();
   }
 }
 </script>

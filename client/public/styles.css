@@ -15,7 +15,6 @@ header {
 	background-color: #eee;
 	width: 100%;
 	display: block;
-	padding: .8rem 0;
 	justify-content: space-between;
 }
 
@@ -23,6 +22,10 @@ header h1 {
 	float: right;
 	font-size: 26px;
 	padding: 4px 0;
+}
+
+header .container {
+	padding: .8rem 0;
 }
 
 header img {
@@ -47,6 +50,7 @@ span.small {
 
 .setting-container {
 	border-bottom: 3px solid #102b3e;
+	position: relative;
 }
 
 tr.result-row {
@@ -56,4 +60,21 @@ tr.result-row {
 .spinner-border {
 	display: block;
 	margin: 0 auto;
+}
+
+.add-entry {
+	background-color: #102b3e;
+	padding: 3px 10px;
+	display: block;
+	position: absolute;
+	top: 0;
+	right: 0;
+	color: #FFF;
+	cursor: pointer;
+	transition: 400ms ease all;
+	opacity: .9;
+}
+
+.add-entry:hover {
+	opacity: 1;
 }

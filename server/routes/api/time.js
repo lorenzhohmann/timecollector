@@ -27,6 +27,7 @@ router.get('/:id/:fromYear/:fromMonth/:fromDay/:toYear/:toMonth/:toDay', (req, r
 		}
 
 		let times = user.times;
+		let timesBetween = [];
 
 		const fromYear = req.params.fromYear;
 		const fromMonth = req.params.fromMonth;
@@ -41,15 +42,15 @@ router.get('/:id/:fromYear/:fromMonth/:fromDay/:toYear/:toMonth/:toDay', (req, r
 			const timestapCurrentObj = moment(time.date).unix();
 
 			const timestampFrom = moment(`${fromYear}-${fromMonth}-${fromDay}`).unix();
-			const timestampTo = moment(`${fromYear}-${fromMonth}-${fromDay}`).unix();
+			const timestampTo = moment(`${toYear}-${toMonth}-${toDay}`).unix();
 
-			if(timestapCurrentObj < timestampFrom || timestapCurrentObj > timestampTo) {
-				times.splice(index, 1);
+			if(timestapCurrentObj >= timestampFrom && timestapCurrentObj <= timestampTo) {
+				timesBetween.push(times[index]);
 			}
 
 		});
 
-		res.status(200).send(times);
+		res.status(200).send(timesBetween);
 	});
 });
 
@@ -76,14 +77,14 @@ router.post('/:id', (req, res) => {
 		}
 
 		let time = {
-			date: moment(req.body.date).add(1, 'hour').tz('Europe/Berlin').format('YYYY-MM-DD'),
-			from: moment(req.body.from).add(1, 'hour').tz('Europe/Berlin').format('YYYY-MM-DD H:mm'),
-			to: moment(req.body.to).add(1, 'hour').tz('Europe/Berlin').format('YYYY-MM-DD H:mm')
+			date: moment(req.body.date)/*.add(1, 'hour')*/.tz('Europe/Berlin').format('YYYY-MM-DD'),
+			from: moment(req.body.from)/*.add(1, 'hour')*/.tz('Europe/Berlin').format('YYYY-MM-DD H:mm'),
+			to: moment(req.body.to)/*.add(1, 'hour')*/.tz('Europe/Berlin').format('YYYY-MM-DD H:mm')
 		};
 
-		if(req.body.break_from && req.body.break_to) {
-			time.break_from = moment(req.body.break_from).add(1, 'hour').tz('Europe/Berlin').format('YYYY-MM-DD H:mm');
-			time.break_to = moment(req.body.break_to).add(1, 'hour').tz('Europe/Berlin').format('YYYY-MM-DD H:mm');
+		if(req.body.break_from && req.body.break_to) {	// TODO check if set and not same time
+			time.break_from = moment(req.body.break_from)/*.add(1, 'hour')*/.tz('Europe/Berlin').format('YYYY-MM-DD H:mm');
+			time.break_to = moment(req.body.break_to)/*.add(1, 'hour')*/.tz('Europe/Berlin').format('YYYY-MM-DD H:mm');
 		}
 
 		user.times.push(time);
@@ -91,6 +92,36 @@ router.post('/:id', (req, res) => {
 			if(err) res.status(500).send(err);
 			res.status(201).send(user);
 		});
+	});
+});
+
+// delete time
+router.delete('/:userId/:id', (req, res) => {
+	User.findOne({_id: req.params.userId}, (err, user) => {
+		if(err) {
+			res.status(404).send();
+			return;
+		}
+
+		let changedTimes = [];
+
+		for(let i = 0; i < user.times.length; i++) {
+			let time = user.times[i];
+			if(time._id != req.params.id) {
+				changedTimes.push(time);
+			}
+		}
+
+		user.times = changedTimes;
+
+		user.save((err) => {
+			if(err) {
+				res.status(400).send();
+				return;
+			}
+			res.status(200).send();
+		});
+
 	});
 });
 

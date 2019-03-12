@@ -5,7 +5,6 @@ const mongoose = require('mongoose');
 const PORT = process.env.PORT || 3000;
 
 // setup cors
-// app.use(express.static('public'));
 app.use(express.json());
 app.use(cors());
 
@@ -22,6 +21,15 @@ app.use('/api/user', userRouter);
 
 // fallback for RestAPI
 app.use((req, res) => res.status(404).send());
+
+// handle production
+if(process.env.NODE_ENV === 'production') {
+	// static folder
+	app.use(express.static(__dirname + '/public'));
+
+	// handle SPA
+	app.get(/.*/, (req, res) => res.sendFile(__dirname + '/public/index.html'));
+}
 
 // start server
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

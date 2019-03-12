@@ -1,7 +1,7 @@
 import axios from 'axios';
 import moment from 'moment';
 
-const url = 'http://localhost:3000/api/';
+const url = 'api/';
 
 export default class TimeService {
 

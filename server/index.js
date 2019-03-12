@@ -20,7 +20,7 @@ const userRouter = require('./routes/api/user.js');
 app.use('/api/user', userRouter);
 
 // fallback for RestAPI
-app.use((req, res) => res.status(404).send());
+// app.use((req, res) => res.status(404).send());
 
 // handle production
 if(process.env.NODE_ENV === 'production') {

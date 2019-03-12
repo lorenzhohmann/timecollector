@@ -7,7 +7,7 @@ const PORT = process.env.PORT || 3000;
 
 // setup cors
 app.use(bodyParser.json());
-app.use(express.json());
+// app.use(express.json());
 app.use(cors());
 
 // connect mongoose

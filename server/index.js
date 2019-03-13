@@ -9,8 +9,8 @@ app.use(express.json());
 app.use(cors());
 
 // connect mongoose
-mongoose.connect('mongodb://control.lorenzhohmann.de:27017/timecollector', {useNewUrlParser: true});
-// mongoose.connect('mongodb://root:Hdsfhiu2345@ds163835.mlab.com:63835/timecollector', {useNewUrlParser: true});
+// mongoose.connect('mongodb://control.lorenzhohmann.de:27017/timecollector', {useNewUrlParser: true});
+mongoose.connect('mongodb://root:Hdsfhiu2345@ds163835.mlab.com:63835/timecollector', {useNewUrlParser: true});
 
 // add time router RestAPI
 const timeRouter = require('./routes/api/time.js');

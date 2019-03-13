@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <Header v-bind:userID="userID"/>
-    <MainComponent v-bind:userID="userID"/>
+    <MainComponent v-bind:userID="userID" v-if="registeredUser"/>
   </div>
 </template>
 
@@ -17,7 +17,8 @@ export default {
   },
   data() {
     return {
-      userID: ''
+      userID: '',
+      registeredUser: true
     }
   },
   created() {

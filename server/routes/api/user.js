@@ -29,6 +29,6 @@ router.get('/:id', (req, res) => {
 
 		res.status(200).send(user.name);
 	});
-})
+});
 
 module.exports = router;

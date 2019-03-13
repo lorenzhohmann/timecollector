@@ -111,6 +111,7 @@ export default {
       }).catch((err) => {
         this.error = err;
         this.loading = false;
+        this.times = [];
       });   
     },
     updateFrom() {

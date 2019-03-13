@@ -8,6 +8,10 @@ export default class TimeService {
 	static getUsername(userID) {
 		return new Promise(async (resolve, reject) => {
 
+			if(!userID) {
+				reject('no user requested');
+			}
+
 			try {
 				const result = await axios.get(url + 'user/' + userID);
 				resolve(result.data);

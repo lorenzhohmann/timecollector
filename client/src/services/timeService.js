@@ -21,6 +21,18 @@ export default class TimeService {
 		});
 	}
 
+	static login(username, password) {
+		return new Promise(async (resolve, reject) => {
+
+			try {
+				const result = axios.post(url + 'user/');
+				resolve(result.data._id);
+			} catch(err) {
+				reject(err);
+			}
+		});
+	}
+
 	static getTimes(userID, dateFrom, dateTo) {
 		return new Promise(async (resolve, reject) => {
 

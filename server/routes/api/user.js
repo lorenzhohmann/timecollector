@@ -33,10 +33,8 @@ router.get('/:id', (req, res) => {
 });
 
 // login
-router.post('/login/:name/:password', (req, res) => {
-	User.findOne({name: req.params.name, password: 'test'}, (err, user) => {
-		console.log(err);
-		console.log(user);
+router.post('/login', (req, res) => {
+	User.findOne({name: req.body.name, password: hasher.hash(req.body.password)}, (err, user) => {
 		if(err) {
 			res.status(404).send();
 			return;

@@ -28,7 +28,7 @@ export default {
 	    TimeService.getUsername(this.userID).then((username) => {
 	      this.welcomeText = 'Hallo, ' + username + '!';
 	    }).catch(() => {
-	      this.welcomeText = '404 - Ungültiger Benutzer';
+	      this.welcomeText = '';
 	    });
 	}	
 }

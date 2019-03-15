@@ -1,19 +1,17 @@
 <template>
   <div id="app">
     <Header v-bind:userID="userID"/>
-    <MainComponent v-bind:userID="userID" v-if="registeredUser"/>
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
 import Header from './components/Header.vue';
-import MainComponent from './components/MainComponent.vue';
 
 export default {
   name: 'app',
   components: {
-    Header,
-    MainComponent
+    Header
   },
   data() {
     return {

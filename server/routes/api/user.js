@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Joi = require('joi');
 const mongoose = require('mongoose');
+const hasher = require('../../assets/hasher.js');
 
 const User = require('../../models/userModel.js');
 
@@ -12,7 +13,7 @@ router.post('/', (req, res) => {
 		return;
 	}
 
-	const user = new User({name: req.body.name, times: []});
+	const user = new User({name: req.body.name, password: hasher.hash(req.body.password), times: []});
 	user.save((err) => {
 		if(err) res.status(500).send();
 		res.status(201).send(user);
@@ -30,5 +31,19 @@ router.get('/:id', (req, res) => {
 		res.status(200).send(user.name);
 	});
 });
+
+// login
+router.post('/login/:name/:password', (req, res) => {
+	User.findOne({name: req.params.name, password: 'test'}, (err, user) => {
+		console.log(err);
+		console.log(user);
+		if(err) {
+			res.status(404).send();
+			return;
+		}
+
+		res.status(200).send(user);
+	})
+})
 
 module.exports = router;

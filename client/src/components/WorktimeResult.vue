@@ -20,15 +20,15 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="time in times">
+        <tr v-for="time in times" v-bind:key="time">
           <th scope="row">{{time.date}}</th>
-          <td>{{time.from}}</td>
-          <td>{{time.to}}</td>
+          <td>{{time.worked_from}}</td>
+          <td>{{time.worked_to}}</td>
           <td>{{time.break_from}}</td>
           <td>{{time.break_to}}</td>
-          <td>{{calculateWorktime(time.from, time.to, time.break_from, time.break_to)}}</td>
+          <td>{{calculateWorktime(time.worked_from, time.worked_to, time.break_from, time.break_to)}}</td>
           <td>
-            <button type="button" class="close" aria-label="Close" title="Eintrag löschen" v-on:click="deleteTime(time._id)">
+            <button type="button" class="close" aria-label="Close" title="Eintrag löschen" v-on:click="deleteTime(time.id)">
               <span aria-hidden="true">&times;</span>
             </button>
         </td>
@@ -51,7 +51,7 @@ import moment from 'moment';
 
 export default {
 	name: 'WorktimeResult',
-	props: ['loading', 'times', 'userID'],
+	props: ['loading', 'times'],
 	data() {
 		return {
 			error: ''
@@ -61,7 +61,7 @@ export default {
     deleteTime(id) {
       if(confirm('Soll dieser Eintrag wirklich gelöscht werden?')) {
 
-        TimeService.deleteTime(this.userID, id).then(() => {
+        TimeService.deleteTime(this.$store.state.user.id, id).then(() => {
           this.$emit('get-times');
         }).catch((err) => {
           this.error = err;
@@ -104,7 +104,7 @@ export default {
       let hours = 0;
 
       this.times.forEach((time) => {
-        const worktime = this.calculateWorktime(time.from, time.to, time.break_from, time.break_to);
+        const worktime = this.calculateWorktime(time.worked_from, time.worked_to, time.break_from, time.break_to);
 
         const workTimeSplit = worktime.split(':');
         hours += parseInt(workTimeSplit[0]);

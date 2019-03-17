@@ -52,7 +52,7 @@
 
       </div>
 
-      <WorktimeResult v-on:get-times="getTimes()" v-bind:loading="loading" v-bind:times="times" v-bind:userID="userID"/>
+      <WorktimeResult v-on:get-times="getTimes()" v-bind:loading="loading" v-bind:times="times"/>
     </div>
 
   </main>
@@ -67,7 +67,6 @@ import WorktimeResult from './WorktimeResult.vue';
 
 export default {
   name: 'MainComponent',
-  props: ["userID"],
   components: {
     WorktimeResult
   },
@@ -77,7 +76,12 @@ export default {
       showTo: '',
       insertArea: false,
       loading: false,
-      times: []
+      times: [],
+    }
+  },
+  mounted() {
+    if(!this.$store.state.isUserLoggedIn) {
+      this.$router.push('login');
     }
   },
   created() {
@@ -90,21 +94,8 @@ export default {
   methods: {
     getTimes() {
       this.loading = true;
-      TimeService.getTimes(this.userID, this.showFrom, this.showTo).then((times) => {
+      TimeService.getTimes(this.$store.state.user.id, this.showFrom, this.showTo).then((times) => {
         this.times = times;
-
-        this.times.forEach((time) => {
-          time.date = moment(time.date).format('DD.MM.YYYY');
-          time.from = moment(time.from)/*.add(-1, 'hours')*/.format('HH:mm');
-          time.to = moment(time.to)/*.add(-1, 'hours')*/.format('HH:mm');
-          if(time.break_from) {
-            time.break_from = moment(time.break_from)/*.add(-1, 'hours')*/.format('HH:mm');
-          } else time.break_from = '-';
-
-          if(time.break_to) {
-            time.break_to = moment(time.break_to)/*.add(-1, 'hours')*/.format('HH:mm');
-          } else time.break_to = '-';
-        });
 
         this.loading = false;
 
@@ -133,7 +124,7 @@ export default {
     },
     saveInsert() {
 
-      TimeService.saveInsert(this.userID, this.insertDate, this.insertFrom, this.insertTo, this.insertBreakFrom, this.insertBreakTo).then(() => {
+      TimeService.saveInsert(this.$store.state.user.id, this.insertDate, this.insertFrom, this.insertTo, this.insertBreakFrom, this.insertBreakTo).then(() => {
         this.insertArea = false;
         this.getTimes();
       });

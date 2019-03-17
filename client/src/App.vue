@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <Header v-bind:userID="userID"/>
+    <Header v-bind:currentRoute="this.$router.currentRoute.name"/>
     <router-view></router-view>
   </div>
 </template>
@@ -12,17 +12,6 @@ export default {
   name: 'app',
   components: {
     Header
-  },
-  data() {
-    return {
-      userID: '',
-      registeredUser: true
-    }
-  },
-  created() {
-    const href = window.location.href;
-    const hrefSplit = href.split('/');
-    this.userID = hrefSplit.pop();
   }
 }
 </script>

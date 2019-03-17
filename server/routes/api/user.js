@@ -1,47 +1,33 @@
 const express = require('express');
 const router = express.Router();
 const Joi = require('joi');
-const mongoose = require('mongoose');
-const hasher = require('../../assets/hasher.js');
+const hasher = require('../../assets/hasher');
+const jwt = require('jsonwebtoken');
+const db = require('../../assets/mysqlconnection');
 
-const User = require('../../models/userModel.js');
-
-// add user
-router.post('/', (req, res) => {
-	if(!req.body.name) {
-		res.status(400).send();
-		return;
-	}
-
-	const user = new User({name: req.body.name, password: hasher.hash(req.body.password), times: []});
-	user.save((err) => {
-		if(err) res.status(500).send();
-		res.status(201).send(user);
-	});
-});
-
-// get user name
-router.get('/:id', (req, res) => {
-	User.findOne({_id: req.params.id}, (err, user) => {
-		if(err) {
-			res.status(404).send();
-			return;
-		}
-
-		res.status(200).send(user.name);
-	});
-});
+function jwtSignUser(user) {
+	const ONE_WEEK = 60 * 60 * 24 * 7;
+	return jwt.sign(user, process.env.JWT_SECRET || 'scrtTKN19', {expiresIn: ONE_WEEK});
+}
 
 // login
 router.post('/login', (req, res) => {
-	User.findOne({name: req.body.name, password: hasher.hash(req.body.password)}, (err, user) => {
+	db.query('SELECT * FROM users WHERE name = \'' + req.body.name + '\' AND password = \'' + hasher.hash(req.body.password) + '\'', (err, result) => {
 		if(err) {
-			res.status(404).send();
+			res.status(400).send();
 			return;
 		}
 
-		res.status(200).send(user);
-	})
+		if(result.length == 0) {
+			res.status(403).send({error: 'Bitte überprüfe deine Login-Daten.'});
+			return;
+		}
+
+		res.status(200).send({
+			user: result[0],
+			token: jwtSignUser({id: result.id, name: result.name})
+		});		
+	});
 })
 
 module.exports = router;

@@ -78,3 +78,35 @@ tr.result-row {
 .add-entry:hover {
 	opacity: 1;
 }
+
+
+/* RESPONSIVE */
+@media screen and (max-width: 576px) {
+	header .container {
+		padding: .8rem 15px;
+	}
+	.sub-header h2 {
+		font-size: 30px;
+	}
+	header h1 {
+		float: left;
+	}
+	header img {
+		display: none;
+	}
+	.table-wrapper {
+		overflow-x: scroll;
+	}
+	#mobile-hidden {
+		display: none;
+	}
+	h3 {
+		font-size: 1.3rem;
+	}
+	.sub-header {
+		padding: 3vh 0;
+	}
+	.sub-header h2 {
+		margin: 0;
+	}
+}

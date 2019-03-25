@@ -44,7 +44,7 @@
         
         <div class="input-group">
           <div class="input-group-prepend">
-            <span class="input-group-text">Zeitraum auswählen</span>
+            <span class="input-group-text" id="mobile-hidden">Zeitraum auswählen</span>
           </div>
           <input type="date" class="form-control" placeholder="von" v-model="showFrom" v-on:change="updateFrom()">
           <input type="date" class="form-control" placeholder="bis" v-model="showTo" v-on:change="getTimes()">

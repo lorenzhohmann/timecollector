@@ -5,10 +5,8 @@ import createPersistedState from 'vuex-persistedstate';
 Vue.use(Vuex);
 
 export default new Vuex.Store({
-	strcit: true,
-	plugins: [
-		createPersistedState()
-	],
+	strict: true,
+	plugins: [createPersistedState()],
 	state: {
 		token: null,
 		user: null,
@@ -18,7 +16,7 @@ export default new Vuex.Store({
 	mutations: {
 		setToken(state, token) {
 			state.token = token;
-			if(token) {
+			if (token) {
 				state.isUserLoggedIn = true;
 				state.welcomeText = 'Hallo, ' + state['user'] + '!';
 			} else {
@@ -35,7 +33,6 @@ export default new Vuex.Store({
 		},
 		setUser({commit}, user) {
 			commit('setUser', user);
-		}		
+		}
 	}
-
 });

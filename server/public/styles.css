@@ -1,6 +1,5 @@
 @import url('https://fonts.googleapis.com/css?family=Montserrat');
 
-
 * {
 	margin: 0;
 	padding: 0;
@@ -25,7 +24,7 @@ header h1 {
 }
 
 header .container {
-	padding: .8rem 0;
+	padding: 0.8rem 0;
 }
 
 header img {
@@ -38,11 +37,10 @@ header img {
 }
 
 .sub-header h2 {
-	color: #FFF;
+	color: #fff;
 	font-size: 80px;
 	text-align: center;
 }
-
 span.small {
 	font-size: 10px;
 	position: absolute;
@@ -69,21 +67,20 @@ tr.result-row {
 	position: absolute;
 	top: 0;
 	right: 0;
-	color: #FFF;
+	color: #fff;
 	cursor: pointer;
 	transition: 400ms ease all;
-	opacity: .9;
+	opacity: 0.9;
 }
 
 .add-entry:hover {
 	opacity: 1;
 }
 
-
 /* RESPONSIVE */
 @media screen and (max-width: 576px) {
 	header .container {
-		padding: .8rem 15px;
+		padding: 0.8rem 15px;
 	}
 	.sub-header h2 {
 		font-size: 30px;
@@ -94,8 +91,9 @@ tr.result-row {
 	header img {
 		display: none;
 	}
-	.table-wrapper {
+	.table {
 		overflow-x: scroll;
+		display: block;
 	}
 	#mobile-hidden {
 		display: none;

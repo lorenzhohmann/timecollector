@@ -17,28 +17,33 @@
           <th scope="col">Datum</th>
           <th scope="col">von</th>
           <th scope="col">bis</th>
-          <th scope="col">Pause (von)</th>
-          <th scope="col">Pause (bis)</th>
+          <th scope="col">Pausenzeit</th>
           <th scope="col">Gesamt</th>
           <th scope="col"></th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="time in times" :key="time.id">
-          <th scope="row">{{ time.date }}</th>
+        <tr
+          v-for="time in times"
+          :key="time.id"
+          :class="time.double ? 'double' : ''"
+        >
+          <th scope="row">
+            {{ time.date }}
+          </th>
           <td>{{ time.worked_from }}</td>
           <td>{{ time.worked_to }}</td>
-          <td>{{ time.break_from }}</td>
-          <td>{{ time.break_to }}</td>
+          <td>{{ time.break_duration }}</td>
           <td>
-            {{
-              calculateWorktime(
-                time.worked_from,
-                time.worked_to,
-                time.break_from,
-                time.break_to
-              )
-            }}
+            <b>
+              {{
+                calculateWorktime(
+                  time.worked_from,
+                  time.worked_to,
+                  time.break_duration
+                )
+              }}</b
+            >
           </td>
           <td>
             <button
@@ -54,9 +59,13 @@
         </tr>
         <tr class="result-row">
           <th scope="row">Arbeitszeit gesamt</th>
-          <td colspan="4"></td>
-          <td>{{ getWorkTime() }}</td>
-          <td colspan="1"></td>
+          <td colspan="3"></td>
+          <td>
+            <b class="text-danger">{{ getWorkTime() }}</b>
+          </td>
+          <td>
+            <b class="text-danger">(an {{ getDays() }} Tagen)</b>
+          </td>
         </tr>
       </tbody>
     </table>
@@ -72,7 +81,7 @@ export default {
   props: ['loading', 'times'],
   data() {
     return {
-      error: ''
+      error: '',
     };
   },
   methods: {
@@ -82,12 +91,12 @@ export default {
           .then(() => {
             this.$emit('get-times');
           })
-          .catch(err => {
+          .catch((err) => {
             this.error = err;
           });
       }
     },
-    calculateWorktime(from, to, break_from, break_to) {
+    calculateWorktime(from, to, breakDuration) {
       let minutes = 0;
       let hours = 0;
 
@@ -97,15 +106,8 @@ export default {
       const duration = moment.duration(endTime.diff(startTime));
       minutes = parseInt(duration.asMinutes());
 
-      // calculate breaks
-      if (break_from != '-' && break_to != '-') {
-        const breakBegin = moment(break_from, 'HH:mm');
-        const breakEnd = moment(break_to, 'HH:mm');
-        const breakDuration = moment.duration(breakEnd.diff(breakBegin));
-
-        // subtract break from worktime
-        minutes -= parseInt(breakDuration.asMinutes());
-      }
+      // subtract break from worktime
+      minutes -= parseInt(breakDuration);
 
       while (minutes > 59) {
         minutes -= 60;
@@ -121,12 +123,11 @@ export default {
       let minutes = 0;
       let hours = 0;
 
-      this.times.forEach(time => {
+      this.times.forEach((time) => {
         const worktime = this.calculateWorktime(
           time.worked_from,
           time.worked_to,
-          time.break_from,
-          time.break_to
+          time.break_duration
         );
 
         const workTimeSplit = worktime.split(':');
@@ -143,7 +144,21 @@ export default {
       if (minutes < 10) minutes = '0' + minutes;
 
       return hours + ':' + minutes;
-    }
-  }
+    },
+    getDays() {
+      return this.times.length;
+    },
+  },
 };
 </script>
+
+<style scoped>
+.double {
+  border-left: 2px solid orange;
+  font-style: italic;
+}
+.double td,
+.double th {
+  background-color: rgb(251 242 208);
+}
+</style>

@@ -2,7 +2,7 @@
   <main>
     <div class="container">
       <div class="setting-container pb-3 mt-5">
-        <h3>Arbeitszeiten anzeigen</h3>
+        <h3>Deine Arbeitszeiten</h3>
         <span
           class="add-entry"
           title="Eintrag hinzufügen"
@@ -15,7 +15,7 @@
           <h4>Eintrag hinzufügen</h4>
 
           <div class="form-row">
-            <div class="form-group col-md-4">
+            <div class="form-group col-md-3">
               <label>Datum</label>
               <input
                 type="date"
@@ -25,7 +25,16 @@
                 v-model="insertDate"
               />
             </div>
-            <div class="form-group col-md-4">
+            <div class="form-group col-md-3">
+              <label>Pausenzeit</label>
+              <input
+                type="time"
+                class="form-control"
+                placeholder="Pause"
+                v-model="insertBreakDuration"
+              />
+            </div>
+            <div class="form-group col-md-3">
               <label>von</label>
               <input
                 type="time"
@@ -34,33 +43,13 @@
                 v-model="insertFrom"
               />
             </div>
-            <div class="form-group col-md-4">
+            <div class="form-group col-md-3">
               <label>bis</label>
               <input
                 type="time"
                 class="form-control"
                 placeholder="bis"
                 v-model="insertTo"
-              />
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="form-group col-md-6">
-              <label>Pause (von)</label>
-              <input
-                type="time"
-                class="form-control"
-                placeholder="Pause (von)"
-                v-model="insertBreakFrom"
-              />
-            </div>
-            <div class="form-group col-md-6">
-              <label>Pause (bis)</label>
-              <input
-                type="time"
-                class="form-control"
-                placeholder="Pause (bis)"
-                v-model="insertBreakTo"
               />
             </div>
           </div>
@@ -72,7 +61,7 @@
                 class="btn btn-primary mr-2"
                 v-on:click="saveInsert()"
               >
-                Speichern
+                Eintragen
               </button>
               <button
                 type="button"
@@ -127,7 +116,7 @@ import WorktimeResult from './WorktimeResult.vue';
 export default {
   name: 'MainComponent',
   components: {
-    WorktimeResult
+    WorktimeResult,
   },
   data() {
     return {
@@ -135,7 +124,7 @@ export default {
       showTo: '',
       insertArea: false,
       loading: false,
-      times: []
+      times: [],
     };
   },
   mounted() {
@@ -161,12 +150,28 @@ export default {
         this.showFrom,
         this.showTo
       )
-        .then(times => {
+        .then((times) => {
           this.times = times;
+
+          // highlight double dates
+          let dates = [];
+          this.times.forEach((timeRow) => {
+            if (dates.indexOf(timeRow.date)) {
+              let doubledRow = this.times.find(
+                (t) => t.date === timeRow.date && t.id !== timeRow.id
+              );
+              if (doubledRow) {
+                doubledRow.double = true;
+                timeRow.double = true;
+              }
+            }
+
+            dates.push(timeRow.date);
+          });
 
           this.loading = false;
         })
-        .catch(err => {
+        .catch((err) => {
           this.error = err;
           this.loading = false;
           this.times = [];
@@ -191,31 +196,38 @@ export default {
         .format('HH:mm');
       this.insertTo = moment()
         .startOf('day')
-        .add(17, 'hours')
+        .add(16, 'hours')
+        .add(30, 'minutes')
         .format('HH:mm');
 
-      this.insertBreakFrom = moment()
+      this.insertBreakDuration = moment()
         .startOf('day')
-        .add(13, 'hours')
-        .format('HH:mm');
-      this.insertBreakTo = moment()
-        .startOf('day')
-        .add(13.5, 'hours')
+        .add(30, 'minutes')
         .format('HH:mm');
     },
     saveInsert() {
+      let breakSplit = this.insertBreakDuration.split(':');
+      let insertBreakFrom = moment()
+        .startOf('day')
+        .format('HH:mm');
+      let insertBreakTo = moment()
+        .startOf('day')
+        .add(breakSplit[0], 'hours')
+        .add(breakSplit[1], 'minutes')
+        .format('HH:mm');
+
       TimeService.saveInsert(
         this.$store.state.user.id,
         this.insertDate,
         this.insertFrom,
         this.insertTo,
-        this.insertBreakFrom,
-        this.insertBreakTo
+        insertBreakFrom,
+        insertBreakTo
       ).then(() => {
         this.insertArea = false;
         this.getTimes();
       });
-    }
-  }
+    },
+  },
 };
 </script>

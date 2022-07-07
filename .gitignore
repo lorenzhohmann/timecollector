@@ -107,3 +107,5 @@ server/public
 
 # Custom
 keys/
+
+*.rest

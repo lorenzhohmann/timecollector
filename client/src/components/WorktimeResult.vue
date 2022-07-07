@@ -107,7 +107,9 @@ export default {
       minutes = parseInt(duration.asMinutes());
 
       // subtract break from worktime
-      minutes -= parseInt(breakDuration);
+      let breakSplit = breakDuration.split(':');
+      minutes -= parseInt(breakSplit[1]); // substract break minutes
+      minutes -= parseInt(breakSplit[0] * 60); // substract break hours
 
       while (minutes > 59) {
         minutes -= 60;
